@@ -1,0 +1,7 @@
+
+# Secrets et données locales
+.env
+data/logs/csv/*
+data/logs/json/*
+!data/logs/csv/.gitkeep
+!data/logs/json/.gitkeep
