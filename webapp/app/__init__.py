@@ -35,12 +35,13 @@ def create_app():
     # Limitation des requêtes avec Redis
     limiter.init_app(app)
 
-    from app.routes import files, main, upload, search
+    from app.routes import files, main, upload, search, api
 
     app.register_blueprint(main.bp)
     app.register_blueprint(upload.bp)
     app.register_blueprint(files.bp)
     app.register_blueprint(search.bp)
+    app.register_blueprint(api.bp)
 
     @app.before_request
     def manage_session():
