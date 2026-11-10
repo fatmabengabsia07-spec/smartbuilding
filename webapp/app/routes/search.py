@@ -20,15 +20,15 @@ CACHE_TTL = 60
 SORT_FIELDS = {
     "date": "@timestamp",
     "value": "value",
-    "level": "level.keyword",
-    "sensor": "sensor_id.keyword",
+    "level": "level",
+    "sensor": "sensor_id",
 }
 
 FILTER_FIELDS = {
-    "sensor_id": "sensor_id.keyword",
-    "sensor_type": "sensor_type.keyword",
-    "zone": "zone.keyword",
-    "level": "level.keyword",
+    "sensor_id": "sensor_id",
+    "sensor_type": "sensor_type",
+    "zone": "zone",
+    "level": "level",
 }
 
 

@@ -16,6 +16,17 @@ services:
       timeout: 10s
       retries: 10
 
+  es-init:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./elasticsearch:/init:ro
+    command: ["sh", "-c", "curl -sSf -X PUT http://elasticsearch:9200/_index_template/smartbuilding -H 'Content-Type: application/json' --data-binary @/init/index_template.json"]
+    networks: [smartbuilding-net]
+    restart: "no"
+
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     environment:
@@ -43,6 +54,8 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+      es-init:
+        condition: service_completed_successfully
     networks: [smartbuilding-net]
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9600 || exit 1"]

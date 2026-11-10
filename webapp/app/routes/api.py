@@ -11,10 +11,10 @@ log = logging.getLogger(__name__)
 INDEX = "smartbuilding-logs-*"
 
 FILTER_FIELDS = {
-    "sensor_id": "sensor_id.keyword",
-    "sensor_type": "sensor_type.keyword",
-    "zone": "zone.keyword",
-    "level": "level.keyword",
+    "sensor_id": "sensor_id",
+    "sensor_type": "sensor_type",
+    "zone": "zone",
+    "level": "level",
 }
 
 
@@ -77,8 +77,8 @@ def list_logs():
         sort_fields = {
             "date": "@timestamp",
             "value": "value",
-            "level": "level.keyword",
-            "sensor": "sensor_id.keyword"
+            "level": "level",
+            "sensor": "sensor_id"
         }
 
         sort_by = request.args.get("sort", "date")
@@ -127,16 +127,16 @@ def get_stats():
             size=0,
             aggs={
                 "unique_sensors": {
-                    "cardinality": {"field": "sensor_id.keyword"}
+                    "cardinality": {"field": "sensor_id"}
                 },
                 "by_sensor_type": {
-                    "terms": {"field": "sensor_type.keyword", "size": 20}
+                    "terms": {"field": "sensor_type", "size": 20}
                 },
                 "by_zone": {
-                    "terms": {"field": "zone.keyword", "size": 20}
+                    "terms": {"field": "zone", "size": 20}
                 },
                 "by_level": {
-                    "terms": {"field": "level.keyword", "size": 20}
+                    "terms": {"field": "level", "size": 20}
                 },
                 "average_value": {
                     "avg": {"field": "value"}
