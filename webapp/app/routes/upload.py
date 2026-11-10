@@ -8,6 +8,7 @@ from pymongo import ReturnDocument
 from werkzeug.utils import secure_filename
 
 from app import extensions as ext
+from app.security import limiter
 from app.services import validation
 
 bp = Blueprint("upload", __name__)
@@ -22,6 +23,7 @@ def _error(message, status):
 
 
 @bp.post("/upload")
+@limiter.limit("10 per hour", scope="upload")
 def upload():
     """Étape 1 : contrôle du fichier et aperçu. Rien n'est injecté avant la confirmation."""
     f = request.files.get("file")
@@ -61,6 +63,7 @@ def upload():
 
 
 @bp.post("/upload/<file_id>/confirm")
+@limiter.limit("10 per hour", scope="upload")
 def confirm(file_id):
     """Étape 2 : dépôt dans le dossier surveillé par Logstash et mise en file de suivi."""
     files = ext.files()
