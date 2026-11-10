@@ -1,0 +1,25 @@
+{
+  "index_patterns": ["smartbuilding-*"],
+  "template": {
+    "settings": { "number_of_shards": 1, "number_of_replicas": 0 },
+    "mappings": {
+      "properties": {
+        "event_id":    { "type": "keyword" },
+        "@timestamp":  { "type": "date" },
+        "sensor_id":   { "type": "keyword" },
+        "sensor_type": { "type": "keyword" },
+        "zone":        { "type": "keyword" },
+        "value":       { "type": "float" },
+        "unit":        { "type": "keyword" },
+        "level":       { "type": "keyword" },
+        "message": {
+          "type": "text",
+          "fields": { "raw": { "type": "keyword", "ignore_above": 512 } }
+        },
+        "source":      { "type": "keyword" },
+        "file_id":     { "type": "keyword" },
+        "tags":        { "type": "keyword" }
+      }
+    }
+  }
+}
