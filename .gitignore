@@ -6,3 +6,6 @@ data/logs/json/*
 !data/logs/csv/.gitkeep
 !data/logs/json/.gitkeep
 .venv/
+
+__pycache__/
+.pytest_cache/
