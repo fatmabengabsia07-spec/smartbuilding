@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 
 from app import extensions as ext
+from app.security import limiter
 
 bp = Blueprint("main", __name__)
 
@@ -11,6 +12,7 @@ def index():
 
 
 @bp.get("/health")
+@limiter.exempt
 def health():
     checks = ext.check_all()
     healthy = all(ok for ok, _ in checks.values())
