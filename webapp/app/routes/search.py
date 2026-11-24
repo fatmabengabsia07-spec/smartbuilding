@@ -61,6 +61,51 @@ def _save_search_history(params, total, cached):
 @bp.get("/search")
 @limiter.limit("30 per minute")
 def search_logs():
+    """Recherche de logs (texte libre, filtres, tri, pagination, cache Redis 60 s)
+    Limitée à 30 requêtes par minute. Chaque recherche est enregistrée dans l'historique MongoDB.
+    ---
+    tags: [Recherche]
+    parameters:
+      - $ref: '#/parameters/q'
+      - $ref: '#/parameters/sensor_id'
+      - $ref: '#/parameters/sensor_type'
+      - $ref: '#/parameters/zone'
+      - $ref: '#/parameters/level'
+      - $ref: '#/parameters/date_from'
+      - $ref: '#/parameters/date_to'
+      - name: min_value
+        in: query
+        type: number
+        required: false
+        description: Valeur mesurée minimale
+      - name: max_value
+        in: query
+        type: number
+        required: false
+        description: Valeur mesurée maximale
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/per_page'
+      - $ref: '#/parameters/sort'
+      - $ref: '#/parameters/order'
+    responses:
+      200:
+        description: Résultats paginés ("cached" indique l'origine)
+        schema:
+          $ref: '#/definitions/SearchPage'
+      400:
+        description: Paramètre invalide (pagination, tri, valeurs numériques)
+        schema:
+          $ref: '#/definitions/Error'
+      429:
+        description: Limite de 30 recherches par minute dépassée
+        schema:
+          $ref: '#/definitions/Error'
+      503:
+        description: Elasticsearch indisponible
+        schema:
+          $ref: '#/definitions/Error'
+    
+    """
     page = _positive_int("page", 1, 1000000)
     per_page = _positive_int("per_page", 20, 100)
 
@@ -224,6 +269,33 @@ def search_logs():
 @bp.get("/search/history")
 @limiter.limit("30 per minute")
 def get_search_history():
+    """Historique des recherches (les plus récentes d'abord)
+    ---
+    tags: [Recherche]
+    parameters:
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        default: 20
+        minimum: 1
+        maximum: 100
+        description: Nombre d'entrées à retourner
+    responses:
+      200:
+        description: Historique des recherches
+        schema:
+          $ref: '#/definitions/SearchHistory'
+      400:
+        description: limit invalide
+        schema:
+          $ref: '#/definitions/Error'
+      503:
+        description: MongoDB indisponible
+        schema:
+          $ref: '#/definitions/Error'
+    
+    """
     try:
         limit = _positive_int("limit", 20, 100)
 

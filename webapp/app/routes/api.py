@@ -65,6 +65,41 @@ def _serialize_hit(hit):
 
 @bp.get("/logs")
 def list_logs():
+    """Liste paginée des logs avec filtres et tri
+    Interroge les index smartbuilding-logs-* d'Elasticsearch.
+    ---
+    tags: [Logs]
+    parameters:
+      - $ref: '#/parameters/q'
+      - $ref: '#/parameters/sensor_id'
+      - $ref: '#/parameters/sensor_type'
+      - $ref: '#/parameters/zone'
+      - $ref: '#/parameters/level'
+      - $ref: '#/parameters/date_from'
+      - $ref: '#/parameters/date_to'
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/per_page'
+      - $ref: '#/parameters/sort'
+      - $ref: '#/parameters/order'
+    responses:
+      200:
+        description: Page de logs
+        schema:
+          $ref: '#/definitions/LogPage'
+      400:
+        description: Paramètre de pagination ou de tri invalide
+        schema:
+          $ref: '#/definitions/Error'
+      429:
+        description: Limite de requêtes dépassée
+        schema:
+          $ref: '#/definitions/Error'
+      503:
+        description: Elasticsearch indisponible
+        schema:
+          $ref: '#/definitions/Error'
+    
+    """
     try:
         page = int(request.args.get("page", 1))
         per_page = int(request.args.get("per_page", 20))
@@ -120,6 +155,29 @@ def list_logs():
 
 @bp.get("/stats")
 def get_stats():
+    """Statistiques globales (total, capteurs uniques, alertes, répartitions)
+    Les mêmes filtres que /api/v1/logs peuvent être appliqués.
+    ---
+    tags: [Logs]
+    parameters:
+      - $ref: '#/parameters/q'
+      - $ref: '#/parameters/sensor_id'
+      - $ref: '#/parameters/sensor_type'
+      - $ref: '#/parameters/zone'
+      - $ref: '#/parameters/level'
+      - $ref: '#/parameters/date_from'
+      - $ref: '#/parameters/date_to'
+    responses:
+      200:
+        description: Indicateurs calculés par agrégation Elasticsearch
+        schema:
+          $ref: '#/definitions/Stats'
+      503:
+        description: Elasticsearch indisponible
+        schema:
+          $ref: '#/definitions/Error'
+    
+    """
     try:
         response = ext.es_client.search(
             index=INDEX,

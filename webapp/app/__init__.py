@@ -2,6 +2,7 @@ import logging
 import secrets
 from datetime import datetime, timezone
 
+from flasgger import Swagger
 from flask import Flask, jsonify, session
 from flask_session import Session
 from pymongo.errors import PyMongoError
@@ -11,6 +12,7 @@ from werkzeug.exceptions import RequestEntityTooLarge, TooManyRequests
 from app import extensions
 from app.config import Config
 from app.security import limiter
+from app.swagger_config import SWAGGER_CONFIG, SWAGGER_TEMPLATE
 
 
 def create_app():
@@ -42,6 +44,12 @@ def create_app():
     app.register_blueprint(files.bp)
     app.register_blueprint(search.bp)
     app.register_blueprint(api.bp)
+
+    # Documentation Swagger : interface sur /apidocs/, spécification sur /apispec.json
+    Swagger(app, config=SWAGGER_CONFIG, template=SWAGGER_TEMPLATE)
+    # Les fichiers statiques de Swagger UI ne doivent pas consommer la limite de requêtes
+    if "flasgger" in app.blueprints:
+        limiter.exempt(app.blueprints["flasgger"])
 
     @app.before_request
     def manage_session():
