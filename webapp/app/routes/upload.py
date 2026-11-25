@@ -27,7 +27,7 @@ def _error(message, status):
 def upload():
     """Étape 1 : contrôle du fichier et aperçu des 10 premières lignes
     Rien n'est injecté avant la confirmation. Limitée à 10 dépôts par heure et par IP.
-    Extensions acceptées : CSV, JSON et TXT (taille maximale définie par MAX_UPLOAD_MB).
+    Extensions acceptées : CSV et JSON (taille maximale définie par MAX_UPLOAD_MB).
     ---
     tags: [Upload]
     consumes: [multipart/form-data]
@@ -36,7 +36,7 @@ def upload():
         in: formData
         type: file
         required: true
-        description: Fichier de logs (.csv, .json ou .txt)
+        description: Fichier de logs (.csv ou .json)
     responses:
       200:
         description: Fichier valide, aperçu retourné (statut uploaded)
@@ -51,7 +51,7 @@ def upload():
         schema:
           $ref: '#/definitions/Error'
       415:
-        description: Extension non acceptée (CSV, JSON et TXT uniquement)
+        description: Extension non acceptée (CSV et JSON uniquement)
         schema:
           $ref: '#/definitions/Error'
       429:
