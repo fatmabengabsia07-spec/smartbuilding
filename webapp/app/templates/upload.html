@@ -47,21 +47,34 @@
 <div class="card"><div class="card-body">
   <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
     <h2 class="h5 fw-bold mb-0">Fichiers récents</h2>
-    <div>
-      <label for="status-filter" class="form-label small mb-1">Statut</label>
-      <select id="status-filter" class="form-select form-select-sm">
-        <option value="">Tous</option>
-        <option value="uploaded">Envoyé</option>
-        <option value="queued">En file</option>
-        <option value="ingesting">Ingestion</option>
-        <option value="indexed">Indexé</option>
-        <option value="error">Erreur</option>
-      </select>
+    <div class="d-flex flex-wrap align-items-end gap-3">
+      <div>
+        <label for="status-filter" class="form-label small mb-1">Statut</label>
+        <select id="status-filter" class="form-select form-select-sm">
+          <option value="">Tous</option>
+          <option value="uploaded">Envoyé</option>
+          <option value="queued">En file</option>
+          <option value="ingesting">Ingestion</option>
+          <option value="indexed">Indexé</option>
+          <option value="error">Erreur</option>
+        </select>
+      </div>
+      <div>
+        <label for="date-filter" class="form-label small mb-1">Date</label>
+        <input type="date" id="date-filter" class="form-control form-control-sm">
+      </div>
+      <button type="button" id="reset-filters" class="btn btn-outline-secondary btn-sm">Réinitialiser</button>
     </div>
   </div>
   <div class="table-responsive">
     <table class="table align-middle">
-      <thead><tr><th>Nom</th><th>Date</th><th>Taille</th><th>Statut</th><th class="text-end">Nombre de logs</th></tr></thead>
+      <thead><tr>
+        <th data-sort="name" class="th-sort">Nom<span class="sort-ind"></span></th>
+        <th data-sort="date" class="th-sort">Date<span class="sort-ind"></span></th>
+        <th data-sort="size" class="th-sort">Taille<span class="sort-ind"></span></th>
+        <th data-sort="status" class="th-sort">Statut<span class="sort-ind"></span></th>
+        <th data-sort="logs" class="th-sort text-end">Nombre de logs<span class="sort-ind"></span></th>
+      </tr></thead>
       <tbody id="files-body"><tr><td colspan="5" class="text-muted">Chargement…</td></tr></tbody>
     </table>
   </div>

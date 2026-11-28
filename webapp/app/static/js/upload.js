@@ -26,7 +26,7 @@
   const dropzone = $("dropzone");
   const fileInput = $("file-input");
   const typeSelect = $("file-type");
-  const state = { page: 1, status: "" };
+  const state = { page: 1, status: "", date: "", sort: "date", order: "desc" };
   let currentFileId = null;
   let uploading = false;
   let pollTimer = null;
@@ -46,7 +46,8 @@
     return (b / 1048576).toFixed(1) + " Mo";
   }
   function formatDate(iso) {
-    const d = new Date(iso);
+    // MongoDB renvoie des dates UTC sans fuseau : on ajoute "Z" pour afficher l'heure locale
+    const d = new Date(/(Z|[+-]\d\d:?\d\d)$/.test(iso) ? iso : iso + "Z");
     return isNaN(d) ? "" : d.toLocaleString("fr-FR");
   }
   function showAlert(message, kind) {
@@ -215,8 +216,14 @@
 
   async function loadFiles() {
     clearTimeout(pollTimer);
-    const params = new URLSearchParams({ page: state.page, per_page: PER_PAGE });
+    const params = new URLSearchParams({ page: state.page, per_page: PER_PAGE,
+                                         sort: state.sort, order: state.order });
     if (state.status) params.set("status", state.status);
+    if (state.date) {
+      // Jour choisi en heure locale, converti en UTC pour le serveur
+      params.set("from", new Date(state.date + "T00:00:00").toISOString());
+      params.set("to", new Date(state.date + "T23:59:59.999").toISOString());
+    }
     try {
       const res = await fetch(`/api/v1/files?${params}`, { headers: { Accept: "application/json" } });
       const data = await res.json().catch(() => ({}));
@@ -258,5 +265,39 @@
     loadFiles();
   });
 
+  function updateSortIndicators() {
+    document.querySelectorAll("th[data-sort]").forEach((th) => {
+      const ind = th.querySelector(".sort-ind");
+      ind.textContent = th.dataset.sort === state.sort ? (state.order === "asc" ? " ▲" : " ▼") : "";
+    });
+  }
+  document.querySelectorAll("th[data-sort]").forEach((th) => {
+    th.addEventListener("click", () => {
+      const field = th.dataset.sort;
+      if (state.sort === field) {
+        state.order = state.order === "asc" ? "desc" : "asc";
+      } else {
+        state.sort = field;
+        state.order = (field === "name" || field === "status") ? "asc" : "desc";
+      }
+      state.page = 1;
+      updateSortIndicators();
+      loadFiles();
+    });
+  });
+  $("date-filter").addEventListener("change", (e) => {
+    state.date = e.target.value;
+    state.page = 1;
+    loadFiles();
+  });
+  $("reset-filters").addEventListener("click", () => {
+    Object.assign(state, { page: 1, status: "", date: "", sort: "date", order: "desc" });
+    $("status-filter").value = "";
+    $("date-filter").value = "";
+    updateSortIndicators();
+    loadFiles();
+  });
+
+  updateSortIndicators();
   loadFiles();
 })();
