@@ -7,3 +7,5 @@ body { background: #f8f9fa; }
   --bs-btn-hover-bg: var(--sb-green-dark); --bs-btn-hover-border-color: var(--sb-green-dark);
   --bs-btn-active-bg: var(--sb-green-dark); --bs-btn-active-border-color: var(--sb-green-dark); }
 .text-primary { color: var(--sb-green) !important; }
+.th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+.th-sort:hover { color: var(--sb-green); }
