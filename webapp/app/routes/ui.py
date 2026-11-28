@@ -1,12 +1,13 @@
 """Pages HTML de l'interface. Les données viennent de l'API REST, appelée en JavaScript."""
-from flask import Blueprint, render_template
+from flask import Blueprint, current_app, render_template
 
 bp = Blueprint("ui", __name__)
 
 
 @bp.get("/upload")
 def upload_page():
-    return render_template("upload.html", active="upload")
+    return render_template("upload.html", active="upload",
+                           max_mb=current_app.config.get("MAX_UPLOAD_MB", 100))
 
 
 @bp.get("/recherche")
