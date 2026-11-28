@@ -1,0 +1,9 @@
+:root { --sb-green: #0f7355; --sb-green-dark: #0b5c44; }
+body { background: #f8f9fa; }
+.navbar-brand { color: #1f2937; }
+.nav-link.active { color: var(--sb-green) !important; font-weight: 600; text-decoration: underline; }
+.card { border-radius: .75rem; }
+.btn-primary { --bs-btn-bg: var(--sb-green); --bs-btn-border-color: var(--sb-green);
+  --bs-btn-hover-bg: var(--sb-green-dark); --bs-btn-hover-border-color: var(--sb-green-dark);
+  --bs-btn-active-bg: var(--sb-green-dark); --bs-btn-active-border-color: var(--sb-green-dark); }
+.text-primary { color: var(--sb-green) !important; }

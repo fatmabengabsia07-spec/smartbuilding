@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 
 from app import extensions as ext
 from app.security import limiter
@@ -8,16 +8,16 @@ bp = Blueprint("main", __name__)
 
 @bp.get("/")
 def index():
-    """Page d'accueil (texte)
+    """Page d'accueil (interface web)
     ---
     tags: [Système]
-    produces: [text/plain]
+    produces: [text/html]
     responses:
       200:
         description: Message d'accueil
     
     """
-    return "Hello World - Smart Building"
+    return render_template("home.html", active="home")
 
 
 @bp.get("/health")
